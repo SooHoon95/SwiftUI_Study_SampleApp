@@ -106,7 +106,7 @@ import SwiftUI
 //}
 //#Preview {
 //  ContentView()
-//}2
+//}
 
 // ObservedObject 와 Publish - Stateobject 의 차이는?
 
@@ -114,7 +114,7 @@ import SwiftUI
 ///@EnvironmentObject
 ///앱 전반에서 공유 상태를 주입하고 사용할 수 있습니다.
 //class AppSettings: ObservableObject {
-//  @Published var isDarkMode: Bool = false
+//  @Published var isDarkMode: Bool = true
 //}
 //
 //struct ParentView: View {
@@ -129,11 +129,24 @@ import SwiftUI
 //
 //struct ChildView: View {
 //  @EnvironmentObject var settings: AppSettings
-//
+//  
 //  var body: some View {
 //    Toggle("Dark Mode", isOn: $settings.isDarkMode)
+//    SubButtonView()
 //  }
 //}
+//
+//struct SubButtonView: View {
+//  @EnvironmentObject var settings: AppSettings
+//  var body: some View {
+//    Button {
+//      settings.isDarkMode.toggle()
+//    } label: {
+//      Text("SubView Button")
+//    }
+//  }
+//}
+//  
 //#Preview {
 //  ParentView()
 //}
@@ -219,37 +232,37 @@ import SwiftUI
 ///@Namespace
 ///애니메이션 및 매칭 요소의 전환을 관리하는 데 사용됩니다.
 
-//struct NamespaceExample: View {
-//    @Namespace private var animationNamespace
-//    @State private var isExpanded = false
-//
-//    var body: some View {
-//        VStack {
-//            if isExpanded {
-//                RoundedRectangle(cornerRadius: 25.0)
-//                    .matchedGeometryEffect(id: "shape", in: animationNamespace)
-//                    .frame(width: 300, height: 200)
-//                    .onTapGesture {
-//                        withAnimation {
-//                            isExpanded.toggle()
-//                        }
-//                    }
-//            } else {
-//                RoundedRectangle(cornerRadius: 25.0)
-//                    .matchedGeometryEffect(id: "shape", in: animationNamespace)
-//                    .frame(width: 100, height: 100)
-//                    .onTapGesture {
-//                        withAnimation {
-//                            isExpanded.toggle()
-//                        }
-//                    }
-//            }
-//        }
-//    }
-//}
-//#Preview {
-//  NamespaceExample()
-//}
+struct NamespaceExample: View {
+    @Namespace private var animationNamespace
+    @State private var isExpanded = false
+
+    var body: some View {
+        VStack {
+            if isExpanded {
+                RoundedRectangle(cornerRadius: 25.0)
+                    .matchedGeometryEffect(id: "shape", in: animationNamespace)
+                    .frame(width: 300, height: 200)
+                    .onTapGesture {
+                        withAnimation {
+                            isExpanded.toggle()
+                        }
+                    }
+            } else {
+                RoundedRectangle(cornerRadius: 25.0)
+                    .matchedGeometryEffect(id: "shape", in: animationNamespace)
+                    .frame(width: 100, height: 100)
+                    .onTapGesture {
+                        withAnimation {
+                            isExpanded.toggle()
+                        }
+                    }
+            }
+        }
+    }
+}
+#Preview {
+  NamespaceExample()
+}
 
 // ?? 그래서 animationNamespace 가 하는 역할이 뭔데?
 
@@ -323,62 +336,62 @@ import SwiftUI
 //  ObservedObjectExample(viewModel: CounterViewModel())
 //}
 
-class CounterViewModel: ObservableObject {
-  @Published var count: Int = 0
-  
-  init() {
-    print("DEBUG: CountView's ViewModel is initialize")
-  }
-  
-  func increase() { count += 1 }
-}
-
-struct ParentView: View {
-  @State private var count: Int = 0
-  
-  var body: some View {
-    NavigationView {
-      VStack {
-        Text("ParentView's count is \(count)")
-        NavigationLink {
-          CounterView(parentCount: $count, viewModel: CounterViewModel())
-        } label: {
-          Text("Navigate to CountView")
-        }
-      }
-    }
-  }
-}
-
-struct CounterView: View {
-  @Binding var parentCount: Int
-  @StateObject var viewModel: CounterViewModel
-  
-  var body: some View {
-    VStack(spacing: 10) {
-      Text("CountView's Count is \(viewModel.count)")
-      
-      Button(action: {
-        viewModel.increase()
-      }, label: {
-        Text("Add Count")
-      })
-      
-      Text("ParentView's Count is \(parentCount)")
-      
-      Button(action: {
-        parentCount += 1
-      }, label: {
-        
-        Text("Add Count")
-      })
-    }
-  }
-}
-
-#Preview {
-  ParentView()
-}
+//class CounterViewModel: ObservableObject {
+//  @Published var count: Int = 0
+//  
+//  init() {
+//    print("DEBUG: CountView's ViewModel is initialize")
+//  }
+//  
+//  func increase() { count += 1 }
+//}
+//
+//struct ParentView: View {
+//  @State private var count: Int = 0
+//  
+//  var body: some View {
+//    NavigationView {
+//      VStack {
+//        Text("ParentView's count is \(count)")
+//        NavigationLink {
+//          CounterView(parentCount: $count, viewModel: CounterViewModel())
+//        } label: {
+//          Text("Navigate to CountView")
+//        }
+//      }
+//    }
+//  }
+//}
+//
+//struct CounterView: View {
+//  @Binding var parentCount: Int
+//  @StateObject var viewModel: CounterViewModel
+//  
+//  var body: some View {
+//    VStack(spacing: 10) {
+//      Text("CountView's Count is \(viewModel.count)")
+//      
+//      Button(action: {
+//        viewModel.increase()
+//      }, label: {
+//        Text("Add Count")
+//      })
+//      
+//      Text("ParentView's Count is \(parentCount)")
+//      
+//      Button(action: {
+//        parentCount += 1
+//      }, label: {
+//        
+//        Text("Add Count")
+//      })
+//    }
+//  }
+//}
+//
+//#Preview {
+//  ParentView()
+//}
 
 //=====================================================
 
