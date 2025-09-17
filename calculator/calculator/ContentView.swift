@@ -11,10 +11,10 @@ struct ContentView: View {
     
     @State var resultNum = "init Numinit Numinit Numinit Numinit Numinit Numinit Numinit Numinit Numinit Numinit Num"
     let colums: [GridItem] = [
-        GridItem(.adaptive(minimum: 100)),
-        GridItem(.adaptive(minimum: 100)),
-        GridItem(.adaptive(minimum: 100)),
-        GridItem(.adaptive(minimum: 100))
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+        GridItem(.flexible())
     ]
     
     var buttons: [[CalculatorButton]] = [
@@ -39,16 +39,15 @@ struct ContentView: View {
             
             LazyVGrid (columns: colums) {
                 ForEach (buttons, id: \.self) { row in
-                    HStack {
-                        ForEach(row, id:\.self) { button in
-                            
+                    ForEach(row, id: \.self) { button in
+                        CalculatorButtonView(button: button) {
+                            // button 입력시 활동
                         }
                     }
-                        
                 }
             }
             .padding()
-                
+            
         }
     }
 }
