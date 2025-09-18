@@ -17,7 +17,7 @@ struct CalculatorButtonView: View {
     
     var body: some View {
         Button(action: {
-            print("Circular button tapped!")
+            action()
         }) {
             Text(button.title)
                 .font(.system(size: 30))

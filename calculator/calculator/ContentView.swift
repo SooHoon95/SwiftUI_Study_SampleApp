@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State var resultNum = "init Numinit Numinit Numinit Numinit Numinit Numinit Numinit Numinit Numinit Numinit Num"
+    @StateObject var viewModel = ViewModel()
     let colums: [GridItem] = [
         GridItem(.flexible()),
         GridItem(.flexible()),
@@ -26,28 +26,36 @@ struct ContentView: View {
     ]
     
     var body: some View {
-        Spacer()
-        VStack {
-            HStack {
+        
+        ZStack{
+            Color.black.ignoresSafeArea()
+            VStack{
                 Spacer()
-                Text("\(resultNum)")
-                    .font(.title)
-                    .background(.yellow)
-                    .padding()
-                    .lineLimit(1) //
-            }
-            
-            LazyVGrid (columns: colums) {
-                ForEach (buttons, id: \.self) { row in
-                    ForEach(row, id: \.self) { button in
-                        CalculatorButtonView(button: button) {
-                            // button 입력시 활동
+                VStack {
+                    HStack {
+                        Spacer()
+                        Text(viewModel.resultNum)
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.white)
+                            .padding()
+                            .lineLimit(1) //
+                    }
+                    
+                    LazyVGrid (columns: colums) {
+                        ForEach (buttons, id: \.self) { row in
+                            ForEach(row, id: \.self) { button in
+                                CalculatorButtonView(button: button) {
+                                    // button 입력시 활동
+                                    viewModel.buttonTap(button)
+                                }.padding(5)
+                            }
                         }
                     }
+                    .padding()
+                    
                 }
             }
-            .padding()
-            
         }
     }
 }

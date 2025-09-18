@@ -12,19 +12,17 @@ import Combine
 class ViewModel: ObservableObject {
     
     @Published var resultNum: String = "0"
-    
-    public func buttonTap(button: CalculatorButton) {
+    var isNegative: Bool = false
+    public func buttonTap(_ button: CalculatorButton) {
         
         switch button {
         case .zero, .one, .two, .three, .four, .five, .six, .eight, .seven, .nine:
-            
-        case .add: break
-        case .subtract: break
-        case .multiply: break
-        case .divide: break
-        case .decimal: break
-        case .negative: break
-        case .equal: break
+            handleNumber(inputNum: button.title)
+        case .add, .subtract, .multiply, .divide, .decimal:
+            handleSign(inputSign: button.title)
+        case .negative:
+            toggleNegative()
+        case .equal: break  
         case .percent: break
         case .clear: break
         case .delete: break
@@ -34,9 +32,28 @@ class ViewModel: ObservableObject {
     private func handleNumber(inputNum: String) {
         
         if resultNum != "0" {
-            resultNum = "\(resultNum)" + "\(inputNum)"
+            resultNum += inputNum
         } else {
             resultNum = inputNum
+        }
+    }
+    
+    private func handleSign(inputSign: String) {
+        resultNum += inputSign
+    }
+    
+    private func toggleNegative() {
+        
+        if resultNum == "0" {
+            return
+        }
+        if isNegative {
+            resultNum.removeLast()
+            resultNum.removeFirst(2)
+            isNegative.toggle()
+        } else {
+            resultNum = "(-\(resultNum))"
+            isNegative.toggle()
         }
     }
 }
