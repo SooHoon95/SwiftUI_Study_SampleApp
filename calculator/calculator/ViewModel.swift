@@ -19,13 +19,14 @@ class ViewModel: ObservableObject {
         case .zero, .one, .two, .three, .four, .five, .six, .eight, .seven, .nine:
             handleNumber(inputNum: button.title)
         case .add, .subtract, .multiply, .divide, .decimal:
-            handleSign(inputSign: button.title)
+            handleOperator(inputOperator: button.title)
         case .negative:
             toggleNegative()
         case .equal: break  
         case .percent: break
         case .clear: break
-        case .delete: break
+        case .delete:
+          handleDelete()
         }
     }
     
@@ -38,8 +39,16 @@ class ViewModel: ObservableObject {
         }
     }
     
-    private func handleSign(inputSign: String) {
-        resultNum += inputSign
+    private func handleOperator(inputOperator: String) {
+      if resultNum.last == "+" ||
+          resultNum.last == "-" ||
+          resultNum.last == "÷" ||
+          resultNum.last == "×" {
+        resultNum.removeLast()
+        resultNum += inputOperator
+      } else {
+        resultNum += inputOperator
+      }
     }
     
     private func toggleNegative() {
@@ -56,4 +65,16 @@ class ViewModel: ObservableObject {
             isNegative.toggle()
         }
     }
+  
+  private func getResult() {
+  }
+  
+  private func handleDelete() {
+    if resultNum != "0" {
+      resultNum.removeLast()
+      if resultNum.isEmpty {
+        resultNum = "0"
+      }
+    }
+  }
 }
