@@ -34,7 +34,7 @@ struct ContentView: View {
                 VStack {
                     HStack {
                         Spacer()
-                        Text(viewModel.resultNum)
+                        Text(viewModel.expression)
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .foregroundStyle(.white)
