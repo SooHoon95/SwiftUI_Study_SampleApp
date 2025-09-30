@@ -122,8 +122,15 @@ iOSInjectionProject/
 Packages
 xcuserdata
 
+
+
+### Xcode ###
+*.xcworkspacedata
+*.scuserstate
+./xcuserdata
+
+## Xcode 8 and earlier
+
 ### Xcode Patch ###
-/*.gcno
-**/xcshareddata/WorkspaceSettings.xcsettings
 
 # End of https://www.toptal.com/developers/gitignore/api/xcode,swiftpm,swift,macos
