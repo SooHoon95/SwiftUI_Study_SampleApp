@@ -24,7 +24,7 @@ class ViewModel: ObservableObject {
       toggleNegative()
     case .equal: handleEqual()
     case .percent: break
-    case .clear: break
+    case .clear: handleClear()
     case .delete:
       handleDelete()
     }
@@ -101,6 +101,7 @@ class ViewModel: ObservableObject {
       return
     }
     
+    // 복잡한 식의 마지막 숫자 Negative
   }
     
   private func formatResult(_ result: Double) -> String {
@@ -109,9 +110,6 @@ class ViewModel: ObservableObject {
     } else {
       return String(result)
     }
-  }
-  
-  private func getResult() {
   }
   
   private func handleEqual() {
@@ -142,6 +140,19 @@ class ViewModel: ObservableObject {
     }
   }
   
+  private func handleDelete() {
+    if expression != "0" {
+      expression.removeLast()
+      if expression.isEmpty {
+        expression = "0"
+      }
+    }
+  }
+  
+  private func handleClear() {
+    expression = "0"
+  }
+  
   private func operate(inputOperator: String, targetNum: inout Double, currentNum: Double) -> Double{
     
     switch inputOperator {
@@ -160,15 +171,6 @@ class ViewModel: ObservableObject {
     return targetNum
   }
   
-  private func handleDelete() {
-    if expression != "0" {
-      expression.removeLast()
-      if expression.isEmpty {
-        expression = "0"
-      }
-    }
-  }
-  
   private func evaluateOperator(expr: String) -> String{
     var cleanOperator = expr
     
@@ -179,14 +181,35 @@ class ViewModel: ObservableObject {
   }
   
   private func tokenize(expr: String) -> [String] {
-    //        var cleanOperatorExpr = evaluateOperator(expr: expr)
     var tokens: [String] = []
     var currentNumber = ""
     
-    for char in expr {
+    // 여기서 괄호 제거
+    let preprocessedExpr = removeParentheses(expr: expr)
+    print(preprocessedExpr)
+    
+    
+    for (index, char) in preprocessedExpr.enumerated() {
       if char.isNumber || char == "." {
         currentNumber.append(char)
+      } else if char == "-" {
+        // -가 음수 부호인지 연산자인지 판단
+        let isNegativeSign = index == 0 || // 첫 번째 문자
+                            (index > 0 && "+-*/(".contains(preprocessedExpr[preprocessedExpr.index(preprocessedExpr.startIndex, offsetBy: index - 1)]))
+        
+        if isNegativeSign {
+          // 음수 부호로 처리
+          currentNumber.append(char)
+        } else {
+          // 연산자로 처리
+          if !currentNumber.isEmpty {
+            tokens.append(currentNumber)
+            currentNumber = ""
+          }
+          tokens.append(String(char))
+        }
       } else {
+        // 다른 연산자들 (+, *, /, 괄호 등)
         if !currentNumber.isEmpty {
           tokens.append(currentNumber)
           currentNumber = ""
@@ -195,22 +218,30 @@ class ViewModel: ObservableObject {
       }
     }
     
-    if !expr.isEmpty {
+    // 마지막 숫자가 있다면 추가
+    if !currentNumber.isEmpty {
       tokens.append(currentNumber)
     }
     
     return tokens
   }
   
-  private func calculator(inputOperator: String) {
+  private func removeParentheses(expr: String) -> String {
+    var result = expr
     
-    switch (inputOperator) {
-    case "+": break
-    case "-": break
-    case "/": break
-    case "*": break
-    default:
-      break
+    // (-숫자) 패턴을 찾아서 -숫자로 변환
+    let pattern = "\\((-\\d+(?:\\.\\d+)?)\\)"
+    
+    if let regex = try? NSRegularExpression(pattern: pattern) {
+      let range = NSRange(location: 0, length: result.count)
+      result = regex.stringByReplacingMatches(
+        in: result,
+        options: [],
+        range: range,
+        withTemplate: "$1"
+      )
     }
+    
+    return result
   }
 } //
