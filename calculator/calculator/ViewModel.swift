@@ -63,8 +63,6 @@ class ViewModel: ObservableObject {
     } else {
       expression += inputOperator
     }
-    
-    
   }
   
   private func toggleNegative() {
