@@ -100,6 +100,7 @@ class ViewModel: ObservableObject {
     }
     
     // 복잡한 식의 마지막 숫자 Negative
+    lastNumNegative()
   }
     
   private func formatResult(_ result: Double) -> String {
@@ -149,6 +150,48 @@ class ViewModel: ObservableObject {
   
   private func handleClear() {
     expression = "0"
+  }
+  
+  private func lastNumNegative() {
+    var tokens: [String]  = tokenize(expr: expression)
+    var lastNum = tokens.last ?? "0"
+    var result = ""
+    print("complex expression :\n", tokens)
+    // 1. 1 + 2
+    // 2. 1 + (-2)
+    // 1 - 2
+    // 1 - (-2)
+    // 3. 1 * 2
+    // 4. 1 * (-2)
+    // 5. 1 / 2
+    // 6. 1 / (-2)
+    for (index, char) in tokens.enumerated().reversed() {
+      print(index, char)
+      if index == tokens.count-2 {
+        if "+-*/".contains(tokens[index]) {
+          if "-".contains(tokens[tokens.count-1]) {
+            lastNum.removeFirst()
+            tokens[tokens.count - 1] = lastNum
+            result = tokens.joined()
+            expression = result
+            return
+          }
+          if char == "-" {
+            // - -> +로 바꾸기
+            tokens[index] = "+"
+            result = tokens.joined()
+            expression = result
+          } else {
+            lastNum = "(-" + lastNum + ")"
+            tokens[tokens.count-1] = lastNum
+            
+            result = tokens.joined()
+            expression = result
+          }
+        }
+        return
+      }
+    }
   }
   
   private func operate(inputOperator: String, targetNum: inout Double, currentNum: Double) -> Double{
