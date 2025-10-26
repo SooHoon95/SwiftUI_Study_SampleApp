@@ -8,6 +8,7 @@
 import Foundation
 
 import Combine
+import Playgrounds
 
 class ViewModel: ObservableObject {
   
@@ -24,7 +25,8 @@ class ViewModel: ObservableObject {
       toggleNegative()
     case .equal: handleEqual()
     case .percent: break
-    case .clear: handleClear()
+    case .clear:
+      handleClear()
     case .delete:
       handleDelete()
     }
@@ -65,6 +67,11 @@ class ViewModel: ObservableObject {
     }
   }
   
+  private func handleClear() {
+    expression = "0"
+    isNegative = false
+  }
+  
   private func toggleNegative() {
     
     if expression.isEmpty || expression == "0" {
@@ -99,8 +106,18 @@ class ViewModel: ObservableObject {
       return
     }
     
-    // 복잡한 식의 마지막 숫자 Negative
-    lastNumNegative()
+    // 복잡한 식에서의 마지막 숫자 negative
+    var tokens = tokenize(expr: evaluateOperator(expr: expression))
+    if let lastToken = tokens.last, let number = Double(lastToken) {
+      tokens.removeLast()
+      expression = ""
+      tokens.map { expression += $0 }
+      expression += "(-" + (lastToken) + ")"
+    }
+    
+    var newToknes = tokenize(expr: evaluateOperator(expr: expression))
+    print(newToknes)
+    
   }
     
   private func formatResult(_ result: Double) -> String {
