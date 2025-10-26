@@ -165,10 +165,13 @@ class ViewModel: ObservableObject {
     // 4. 1 * (-2)
     // 5. 1 / 2
     // 6. 1 / (-2)
+    
     for (index, char) in tokens.enumerated().reversed() {
-      print(index, char)
+      print(char)
+    }
+    for (index, char) in tokens.enumerated().reversed() {
       if index == tokens.count-2 {
-        if "+-*/".contains(tokens[index]) {
+        if "+-×÷".contains(tokens[index]) {
           if "-".contains(tokens[tokens.count-1]) {
             lastNum.removeFirst()
             tokens[tokens.count - 1] = lastNum
@@ -176,12 +179,20 @@ class ViewModel: ObservableObject {
             expression = result
             return
           }
+          
           if char == "-" {
             // - -> +로 바꾸기
             tokens[index] = "+"
             result = tokens.joined()
             expression = result
           } else {
+            if lastNum.contains("-") {
+              lastNum.removeFirst()
+              tokens[tokens.count - 1] = lastNum
+              result = tokens.joined()
+              expression = result
+              return
+            }
             lastNum = "(-" + lastNum + ")"
             tokens[tokens.count-1] = lastNum
             
@@ -236,7 +247,7 @@ class ViewModel: ObservableObject {
       } else if char == "-" {
         // -가 음수 부호인지 연산자인지 판단
         let isNegativeSign = index == 0 || // 첫 번째 문자
-                            (index > 0 && "+-*/(".contains(preprocessedExpr[preprocessedExpr.index(preprocessedExpr.startIndex, offsetBy: index - 1)]))
+                            (index > 0 && "+-×÷(".contains(preprocessedExpr[preprocessedExpr.index(preprocessedExpr.startIndex, offsetBy: index - 1)]))
         
         if isNegativeSign {
           // 음수 부호로 처리
