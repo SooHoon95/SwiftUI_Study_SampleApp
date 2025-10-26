@@ -114,10 +114,32 @@ class ViewModel: ObservableObject {
   private func handleEqual() {
     // evaluate operator
     let clearExpr = evaluateOperator(expr: expression)
-    let tokens = tokenize(expr: clearExpr)
-    print(tokens)
+    var tokens = tokenize(expr: clearExpr)
+    print("tokens: ", tokens)
     
     var targetNum = 0.0
+    
+    while tokens.contains("*") || tokens.contains("/") {
+      for i in 0..<tokens.count {
+        
+        if "*".contains(tokens[i]) || "/".contains(tokens[i]) {
+          print(tokens)
+          print(tokens[i])
+          
+          var beforeNum = Double(tokens[i-1])
+          let afterNum = Double(tokens[i+1])
+          
+          let result = operate(inputOperator: tokens[i], targetNum: &beforeNum!, currentNum: afterNum!)
+          
+          print("result: ", result)
+          
+          tokens.removeSubrange(i-1...i+1)
+          tokens.insert(String(result), at: i-1)
+          expression = result.truncatingRemainder(dividingBy: 1) == 0 ? String(Int(result)) : String(result)
+          break
+        }
+      }
+    }
     
     for i in 0..<tokens.count {
       if i == 0 {
@@ -156,19 +178,7 @@ class ViewModel: ObservableObject {
     var tokens: [String]  = tokenize(expr: expression)
     var lastNum = tokens.last ?? "0"
     var result = ""
-    print("complex expression :\n", tokens)
-    // 1. 1 + 2
-    // 2. 1 + (-2)
-    // 1 - 2
-    // 1 - (-2)
-    // 3. 1 * 2
-    // 4. 1 * (-2)
-    // 5. 1 / 2
-    // 6. 1 / (-2)
     
-    for (index, char) in tokens.enumerated().reversed() {
-      print(char)
-    }
     for (index, char) in tokens.enumerated().reversed() {
       if index == tokens.count-2 {
         if "+-×÷".contains(tokens[index]) {
@@ -238,8 +248,6 @@ class ViewModel: ObservableObject {
     
     // 여기서 괄호 제거
     let preprocessedExpr = removeParentheses(expr: expr)
-    print(preprocessedExpr)
-    
     
     for (index, char) in preprocessedExpr.enumerated() {
       if char.isNumber || char == "." {
@@ -247,7 +255,7 @@ class ViewModel: ObservableObject {
       } else if char == "-" {
         // -가 음수 부호인지 연산자인지 판단
         let isNegativeSign = index == 0 || // 첫 번째 문자
-                            (index > 0 && "+-×÷(".contains(preprocessedExpr[preprocessedExpr.index(preprocessedExpr.startIndex, offsetBy: index - 1)]))
+                            (index > 0 && "+-*/".contains(preprocessedExpr[preprocessedExpr.index(preprocessedExpr.startIndex, offsetBy: index - 1)]))
         
         if isNegativeSign {
           // 음수 부호로 처리
